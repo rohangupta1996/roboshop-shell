@@ -1,21 +1,30 @@
-echo -e "\e[31m Installing Nginx\e[0m"
-yum install nginx -y
+source common.sh
 
-echo -e "\e[32m removing old content\e[0m"
-rm -rf /usr/share/nginx/html/*
+print_head "Installing Nginx"
+yum install nginx -y &>>$(log_file)
+status_check $?
 
-echo -e "\e[33m Downloading frontend content\e[0m"
-curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend.zip
+print_head "removing old content"
+rm -rf /usr/share/nginx/html/* &>>$(log_file)
+status_check $?
 
-echo -e "\e[34m Extracting Downloaded frontend\e[0m"
+print_head "Downloading frontend content"
+curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend.zip &>>$(log_file)
+status_check $?
+
+print_head "Extracting Downloaded frontend"
 cd /usr/share/nginx/html
-unzip /tmp/frontend.zip
+unzip /tmp/frontend.zip &>>$(log_file)
+status_check $?
 
-echo -e "\e[35m Copying nginx config\e[0m"
-cp configs/nginx.roboshop.conf /etc/nginx/default.d/roboshop.conf
+print_head "Copying nginx config"
+cp $(code_dir)/configs/nginx.roboshop.conf /etc/nginx/default.d/roboshop.conf &>>$(log_file)
+status_check $?
 
-echo -e "[\e[32m Enabling nginx \e[0m"
+print_head "Enabling nginx"
 systemctl enable nginx
+status_check $?
 
-echo -e "\e[35m Start nginx\e[0m"
+print_head "Start nginx"
 systemctl start nginx
+status_check $?
