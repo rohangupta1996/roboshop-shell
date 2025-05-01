@@ -1,16 +1,17 @@
-dnf module disable nodejs -y
-dnf module enable nodejs:20 -y
-dnf install nodejs -y
-useradd roboshop
-mkdir /app
-curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip
-cd /app
-unzip /tmp/catalogue.zip
-cd /app
-npm install
-systemctl daemon-reload
-systemctl enable catalogue
-systemctl start catalogue
-dnf install mongodb-mongosh -y
-mongosh --host MONGODB-SERVER-IPADDRESS </app/db/master-data.js
+component=catalogue
+source common.sh
 
+print_head Copy MongoDB Repo file
+cp mongo.repo /etc/yum.repos.d/mongo.repo &>>$log_file
+exit_status_print $?
+
+nodejs_app_setup
+
+
+print_head Install MongoDB
+dnf install mongodb-mongosh -y &>>$log_file
+exit_status_print $?
+
+print_head Load Master Data
+mongosh --host mongo-dev.ro-bot.store </app/db/master-data.js &>>$log_file
+exit_status_print $?
