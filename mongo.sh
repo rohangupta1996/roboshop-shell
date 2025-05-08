@@ -1,7 +1,7 @@
 source common.sh
 
 print_head Copy mongoDB repo file
-cp mongo.sh /etc/yum.repos.d/mongo.repo &>> $log_file
+cp mongo.repo /etc/yum.repos.d/mongo.repo &>> $log_file
 
 print_head Install MongoDB
 dnf install mongodb-org -y
